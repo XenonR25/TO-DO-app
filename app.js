@@ -1,13 +1,16 @@
 const express = require('express')
 const bodyparser = require('body-parser')
 
+
 const app = express();
 const port = 5000;
 
 //middleware
 app.use(express.json());
 
-let todos = [];
+let todos = [
+    
+];
 
 app.get('/todos',(req,res)=>{
     res.json(todos);
@@ -19,8 +22,16 @@ app.post('/todos',(req,res)=> {
         task: req.body.task,
         completed : false
     }
-    todos.push(newtask),
+    // console.log(req.body);
+
+    todos.push(newtask);
     res.status(200).json(newtask)
+})
+//Finding a Task with ID
+app.get('/todos/:id',(req,res)=>{
+    const id = parseInt(req.params.id);
+    const findTask = todos.find((newtask) => newtask.id === id)
+    res.send(findTask);
 })
 //UPDATE A TASK
 app.patch('/todos/:id', (req, res) => {
