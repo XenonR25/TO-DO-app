@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyparser = require('body-parser')
+const db = require("./db")
 
 
 const app = express();
@@ -8,57 +9,62 @@ const port = 5000;
 //middleware
 app.use(express.json());
 
-let todos = [
-    
-];
+let todos = [];
 
-app.get('/todos',(req,res)=>{
-    res.json(todos);
+//Getting all tasks by admin
+app.get('/tasks/',admin,(req,res)=>{
+    db.query("SELECT * from Tasks;",(err,respond,field)=>{
+        if(err) return console.log(err);
+        else
+            res.json(respond);  
+      })
 })
-//NEW TASK CREATING
-app.post('/todos',(req,res)=> {
-    const newtask = {
-        id: todos.length +1,
-        task: req.body.task,
-        completed : false
-    }
-    // console.log(req.body);
 
-    todos.push(newtask);
-    res.status(200).json(newtask)
+//Getting tasks by id/user
+app.get('/tasks/:id',user,(req,res)=>{
+    db.query("SELECT * from Tasks where person_ID = ?",[req.params.id],(err,respond,fields)=>{
+        if(err) console.log(err);
+        else res.json(respond);
+    })
 })
-//Finding a Task with ID
-app.get('/todos/:id',(req,res)=>{
-    const id = parseInt(req.params.id);
-    const findTask = todos.find((newtask) => newtask.id === id)
-    res.send(findTask);
+
+//Inserting Tasks
+app.post('/tasks/create',(req,res)=> {
+    db.query("INSERT INTO tasks values(?,?,?,?)",[req.body.Description,req.body.TaskID,req.body.status],(err,respond,fields)=>{
+        if(err) console.log(err);
+        else res.json(respond);
+    })
 })
-//UPDATE A TASK
-app.patch('/todos/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    const todo = todos.find(todo => todo.id === id);
-  
-    if (!todo) {
-      return res.status(404).json({ message: '404: Task not found' });
-    }
-  
-    todo.completed = req.body.completed;
-    res.json(todo);
+
+//
+app.patch('/tasks/update/:id', (req, res) => {
+    const taskID = req.params.id;
+    const {Description,status} = req.body;
+    db.query("UPDATE tasks SET Description = ?,status = ? WHERE taskID = ?",[Description,status,taskID],(err,repond,f)=>{
+        if(err) console.log(err);
+        else if(respond.affectedRows === 1)
+        res.status(200).json({message:"Task updated successfully"});
+        else res.status(404).json({message:"Task not found"})
+    })
   })
+  
 
 //DELETING A TASK
-app.delete('/todos/:id',(req,res)=>{
-    const id = parseInt(req.params.id);
-    const index = todos.findIndex(todo => todo.id === id);
-
-    if(index === -1){
-        return res.status(404).json({message: '404 not found'})
-    }
-        todos.splice(index,1);
-        res.json({message:'Task has been deleted'});
+app.delete('/tasks/delete/:id',(req,res)=>{
+   
+    const del = db.query("DELETE FROM tasks WHERE TASKID = ?",[req.params.id],(err,respond,f)=>{
+        if(err) console.log(err);
+        else if(respond.affectedRows)
+        {
+            respond.json(`The task with ${req.params.id} ID has been deleted`);
+            console.log(respond)
+        }
+    });
     
-})
+});
+
+module.exports = app;
 
 
-app.listen(port,()=> 
-console.log(`Server Running on port : http://localhost:${port}`))
+  //app.listen(port,()=> 
+//console.log(`Server Running on port : http://localhost:${port}`))
