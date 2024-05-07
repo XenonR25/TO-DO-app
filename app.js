@@ -36,7 +36,7 @@ app.post('/tasks/create',(req,res)=> {
     })
 })
 
-//
+//update or edit tasks
 app.patch('/tasks/update/:id', (req, res) => {
     const taskID = req.params.id;
     const {Description,status} = req.body;
@@ -52,7 +52,7 @@ app.patch('/tasks/update/:id', (req, res) => {
 //DELETING A TASK
 app.delete('/tasks/delete/:id',(req,res)=>{
    
-    const del = db.query("DELETE FROM tasks WHERE TASKID = ?",[req.params.id],(err,respond,f)=>{
+     db.query("DELETE FROM tasks WHERE TASKID = ?",[req.params.id],(err,respond,f)=>{
         if(err) console.log(err);
         else if(respond.affectedRows)
         {
