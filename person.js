@@ -1,10 +1,11 @@
 const express = require("express");
 router = express.Router();
-
+const admin = require('./Middleware/admin');
+const user = require('./Middleware/user');
 
 const encrypt = require("bcrypt"),
 jwt = require("jsonwebtoken"),
-dotenv = reuire("dotenv");
+dotenv = require("dotenv");
 dotenv.config();
 
 const db = require('./db');

@@ -1,7 +1,8 @@
 const express = require('express')
 const bodyparser = require('body-parser')
 const db = require("./db")
-
+const admin = require('./Middleware/admin');
+const user = require('./Middleware/user');
 
 const app = express();
 const port = 5000;
@@ -9,7 +10,7 @@ const port = 5000;
 //middleware
 app.use(express.json());
 
-let todos = [];
+
 
 //Getting all tasks by admin
 app.get('/tasks/',admin,(req,res)=>{
