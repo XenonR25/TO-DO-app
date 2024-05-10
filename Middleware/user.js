@@ -22,7 +22,7 @@ const user = async(req,res,next)=>{
     }
 }
     catch(error){
-        console.log('Logging from admin.js :',error);
+        console.log('Logging from user.js :',error);
     }
 }
 

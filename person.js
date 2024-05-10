@@ -23,14 +23,18 @@ router.get('/users',admin,(req,res)=>{
 router.post('/register/', (req,res)=>{
     const { Username, email, Password} = req.body;
     
-    db.query("SELECT * FROM person where email=?",[email],async (err,respond,f)=>{
+    db.query("SELECT * FROM person where email=?",[email],async (err,respond)=>{
+        
         if(err) console.log(err);
         if(respond.length > 0){
             return res.status(404).json({error: 'User alreay exists\n'});
         }
         const hash = await encrypt.hashSync(Password, 10);
         const {role} = req.headers;
-        db.query('INSERT INTO person(Username,email,Password,ID) VALUES (?,?,?,?)',[Username,email,hash,role])
+        console.log(respond);
+        const token = jwt.sign("ami rahik", "privatekey");
+        console.log(token);
+        db.query('INSERT INTO person(Username,email,Password,role) VALUES (?,?,?,?)',[Username,email,hash,role])
         res.json({message: 'User registered successfully'});
     })
     })
@@ -40,7 +44,7 @@ router.post('/login/',(req,res,next)=>{
     db.query('SELECT email,Password,role FROM person WHERE email=?',[email],async(err,respond)=>{
         if(err) console.log(err);
         else if(respond.length> 0){
-            console.log(repond);
+            console.log(respond);
             const [{Password:hash,role}] = respond;
 
             const verify = await encrypt.compare(Password,hash);
@@ -49,7 +53,7 @@ router.post('/login/',(req,res,next)=>{
                     email: email,
                     role: role
                 };
-                const token = jwt.sign(jwtData, process.env.private_key);
+                const token = jwt.sign(jwtData, "private key");
                 res.setHeader('auth',token);
                 res.json({message:"login successful",token});
                 next();}

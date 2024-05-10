@@ -4,7 +4,7 @@ const admin = async(req,res,next)=>{
     try{
         const{'auth':usertoken} = req.headers;
         if(!usertoken) return res.status(404).json({err:'No authorization token found'})
-        const verify = jwt.verify(usertoken, process.env.private_key);
+        const verify = jwt.verify(usertoken, "private key");
         if(!verify){
             return res.status(200).send('Authorization failed for admin');
         }

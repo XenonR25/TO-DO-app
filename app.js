@@ -13,8 +13,8 @@ app.use(express.json());
 
 
 //Getting all tasks by admin
-app.get('/tasks/',admin,(req,res)=>{
-    db.query("SELECT * from Tasks;",(err,respond,field)=>{
+app.get('/tasks/admin',admin,(req,res)=>{
+    db.query("SELECT * from Tasks",(err,respond,field)=>{
         if(err) return console.log(err);
         else
             res.json(respond);  
@@ -31,14 +31,14 @@ app.get('/tasks/:id',user,(req,res)=>{
 
 //Inserting Tasks
 app.post('/tasks/create',(req,res)=> {
-    db.query("INSERT INTO tasks values(?,?,?,?)",[req.body.Description,req.body.TaskID,req.body.status],(err,respond,fields)=>{
+    db.query("INSERT INTO tasks values(?,?,?,?)",[req.body.Description,req.body.TaskID,req.body.status,req.body.person_ID],(err,respond,fields)=>{
         if(err) console.log(err);
         else res.json(respond);
     })
 })
 
 //update or edit tasks
-app.patch('/tasks/update/:id', (req, res) => {
+app.patch('/tasks/update/:id',user, (req, res) => {
     const taskID = req.params.id;
     const {Description,status} = req.body;
     db.query("UPDATE tasks SET Description = ?,status = ? WHERE taskID = ?",[Description,status,taskID],(err,repond,f)=>{
@@ -51,7 +51,7 @@ app.patch('/tasks/update/:id', (req, res) => {
   
 
 //DELETING A TASK
-app.delete('/tasks/delete/:id',(req,res)=>{
+app.delete('/tasks/delete/:id',user,(req,res)=>{
    
      db.query("DELETE FROM tasks WHERE TASKID = ?",[req.params.id],(err,respond,f)=>{
         if(err) console.log(err);
