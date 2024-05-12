@@ -38,10 +38,10 @@ app.post('/tasks/create',(req,res)=> {
 })
 
 //update or edit tasks
-app.patch('/tasks/update/:id',user, (req, res) => {
+app.patch('/tasks/update/:id', (req, res) => {
     const taskID = req.params.id;
     const {Description,status} = req.body;
-    db.query("UPDATE tasks SET Description = ?,status = ? WHERE taskID = ?",[Description,status,taskID],(err,repond,f)=>{
+    db.query("UPDATE tasks SET Description = ?,status = ? WHERE taskID = ?",[Description,status,taskID],(err,respond,f)=>{
         if(err) console.log(err);
         else if(respond.affectedRows === 1)
         res.status(200).json({message:"Task updated successfully"});
@@ -51,7 +51,7 @@ app.patch('/tasks/update/:id',user, (req, res) => {
   
 
 //DELETING A TASK
-app.delete('/tasks/delete/:id',user,(req,res)=>{
+app.delete('/tasks/delete/:id',(req,res)=>{
    
      db.query("DELETE FROM tasks WHERE TASKID = ?",[req.params.id],(err,respond,f)=>{
         if(err) console.log(err);
